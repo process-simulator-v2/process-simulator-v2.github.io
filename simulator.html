@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="konva.js"></script>
+    <script src="jsonRead.js"></script>
+    <script src="components.js"></script>
+    <script src="mathProc.js"></script>
+    <script src="backEnd.js"></script>
+    <script src="designer.js"></script>
+    <script src="finance.js"></script>
+    <script src="timeTrack.js"></script>
+    <script src="schedule.js"></script>
+    <script src="activityLog.js"></script>
+    <script src="loadSim.js"></script>
+    <script src="brief.js"></script>
+    <meta charset="utf-8" />
+    <meta name="author" content="Yuvraj Singh Bawa, Puneet Randar">
+    <title>Process Simulator (Working Copy)</title>
+    <style>
+
+    	button {
+	  background-color: #e7e7e7; color: black;
+	  border: 1px solid black;
+	  padding: 5px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	  font-size: 14px;
+	}
+
+	button {
+  transition-duration: 0.4s;
+}
+body {
+	padding: 20px !important;
+}
+button:hover {
+  background-color: white; /* Green */
+  color: black;
+  cursor: pointer;
+}
+
+    	tr:nth-child(even) {background-color: #f2f2f2;}
+    	th, td {
+		  border-bottom: 1px solid #ddd;
+		}
+		th, td {
+		  padding: 5px;
+		  text-align: left;
+		}
+    .row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #f0f0f0;
+      }
+      /* The Modal (background) */
+		.modal {
+		  display: none; /* Hidden by default */
+		  position: fixed; /* Stay in place */
+		  z-index: 1; /* Sit on top */
+		  left: 0;
+		  top: 0;
+		  width: 100%; /* Full width */
+		  height: 100%; /* Full height */
+		  overflow: auto; /* Enable scroll if needed */
+		  background-color: rgb(0,0,0); /* Fallback color */
+		  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+		}
+
+		/* Modal Content/Box */
+		.modal-content {
+		  background-color: #fefefe;
+		  margin: 15% auto; /* 15% from the top and centered */
+		  padding: 20px;
+		  border: 1px solid #888;
+		  width: 80%; /* Could be more or less, depending on screen size */
+		}
+		.modal-content input {
+			margin: 5px;
+		}
+		
+		.small {
+			width: 40% !important;
+		}
+		/* The Close Button */
+		.close {
+		  color: #aaa;
+		  float: right;
+		  font-size: 28px;
+		  font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+		  color: black;
+		  text-decoration: none;
+		  cursor: pointer;
+		}
+    </style>
+  </head>
+  <body>
+  	<div>
+		<button id="load">Load</button>
+		<!--<button id="import">Import</button>-->
+		<button id="view" disabled>Info</button>
+		<button id="paceDown" disabled>Pace Down -</button>
+		<button id="paceUp" disabled>Pace Up +</button>
+		<button id="runSimulation" disabled>Run</button>
+		<button id="pauseSimulation" disabled>Pause</button>
+		<button id="triggerScheduler" style="float:right;" disabled>Schedule</button>
+		<button id="exportActivityLog" style="float:right; margin-right: 10px;" disabled>Export Activity Log</button>
+	</div>
+  	<!-- <input type="text" placeholder="Name..." id="fileName" />
+  	<button id="myBtn">Add resource</button>
+  	<button id="myBtn2">Create process</button>
+  	<button id="myBtn5">Add raw material</button>
+  	<button id="myBtn3">Add workstations</button>
+  	<button id="myBtn6">Add demand node</button>
+  	<button id="myBtn4">Connect workstations</button>
+  	<button id="myBtn7">Export file</button> -->
+    <div id="container"></div>
+    <!-- Trigger/Open The Modal -->
+
+<!-- The Modal -->
+<div id="loadModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content small" id="loadModalContent">
+    <span class="close" id="close99">&times;</span>
+    <h2>Load simulation file</h2>
+    <hr />
+   		<input type="radio" name="simType" id="existingSelected" value="0" checked>Choose an existing simulation
+   		<select id="existingSim">
+   			<option value="310" selected>Params 310</option>
+   			<option value="312">Params 312</option>
+   			<option value="350">Params 350</option>
+   			<option value="360">Params 360</option>
+   			<option value="390">Params 390</option>
+   			<option value="101">Params 101</option>
+   		</select>
+   		<br/>
+   		<input type="radio" name="simType" id="uploadSelected" value="1">Or, upload 
+   			<input type="file" id="selectFiles" value="Import" />
+	<button id="loadSim">Load</button>
+  </div>
+
+</div>
+
+
+
+<!-- The Modal -->
+<div id="addResourceModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close1">&times;</span>
+    <h2>Add new resource type</h2>
+    <hr />
+    Number of resources:<input type="number" id="numResourceInput" min="1" max="5" /><br />
+    Setup Time Configuration:<br />
+    Distribution: <input type="radio" id="deterministic" name="distribution" value="deterministic" onclick="distributionCheck()">
+	  <label for="male">Deterministic</label><br>
+	  <input type="radio" id="exponential" name="distribution" value="exponential" onclick="distributionCheck()">
+	  <label for="female">Exponential</label><br>
+	  <input type="radio" id="normal" name="distribution" value="normal" onclick="distributionCheck()">
+	  <label for="other">Normal</label>
+	  <label id="det-time-label"  style="display:none">Setup time: </label><input type="number" id="det-time" min="0" style="display:none" /><br/>
+	<label id="exp-mean-time-label" style="display:none">Mean setup time:</label> <input type="number" id="exp-mean-time" min="0" style="display:none" /><br/>
+	<label id="norm-mean-time-label" style="display:none">Mean setup time: </label><input type="number" id="norm-mean-time" min="0" style="display:none" /><br/>
+	<label id="norm-sd-label" style="display:none">Standard deviation: </label><input type="number" id="norm-sd" min="0" style="display:none" /><br/>
+	<button id="submitResourceInfo">Add</button>
+  </div>
+
+</div>
+
+
+<!-- The Modal -->
+<div id="addWorkstationModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close2">&times;</span>
+    <h2>Define workstation properties</h2>
+    <hr />
+    Type:
+    <select name="resources" id="resourcesSelect"></select>
+
+    Process Time Configuration:<br />
+    Distribution: <input type="radio" id="deterministic2" name="distribution2" value="deterministic2" onclick="distributionCheck2()">
+	  <label for="male">Deterministic</label><br>
+	  <input type="radio" id="exponential2" name="distribution2" value="exponential2" onclick="distributionCheck2()">
+	  <label for="female">Exponential</label><br>
+	  <input type="radio" id="normal2" name="distribution2" value="normal2" onclick="distributionCheck2()">
+	  <label for="other">Normal</label>
+	  <label id="det-time-label2"  style="display:none">Setup time: </label><input type="number" id="det-time2" min="0" style="display:none" /><br/>
+	<label id="exp-mean-time-label2" style="display:none">Mean setup time:</label> <input type="number" id="exp-mean-time2" min="0" style="display:none" /><br/>
+	<label id="norm-mean-time-label2" style="display:none">Mean setup time: </label><input type="number" id="norm-mean-time2" min="0" style="display:none" /><br/>
+	<label id="norm-sd-label2" style="display:none">Standard deviation: </label><input type="number" id="norm-sd2" min="0" style="display:none" /><br/>
+	<button id="submitWSInfo">Add</button>
+  </div>
+
+</div>
+
+
+<!-- The Modal -->
+<div id="createProcessModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close3">&times;</span>
+    <h2>Specify process parameters: </h2>
+    <hr />
+    Number of columns: <input type="number" id="processNumCols" min="1" max="10" /><br />
+    Number of rows: <input type="number" id="processNumRows" min="1" max="10" /><br />
+    Fixed Weekly Expenditure: <input type="number" id="fixedExp" min="1" /><br />
+    <button id="submitProcessParams">Create</button>
+  </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="addRMModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close4">&times;</span>
+    <h2>Specify parameters: </h2>
+    <hr />
+    Cost per unit: <input type="number" id="costPerUnit" /><br />
+    <button id="submitRMParams">Add</button>
+  </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="addDemandModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close5">&times;</span>
+    <h2>Specify parameters: </h2>
+    <hr />
+    Units demanded: <input type="number" id="unitsDemanded" /><br />
+    <button id="submitDemand">Add</button>
+  </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="rmPurchaseModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content small">
+    <span class="close" id="close6">&times;</span>
+    <h2>Purchase raw material </h2>
+    <hr />
+    Quantity: <input type="number" id="unitsToBePurchased" /><br />
+    Cost: <div id="totalCost"></div>
+    <button id="submitPurchaseRequest">Purchase</button>
+  </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="wsParamsModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content small">
+    <span class="close" id="close7">&times;</span>
+    <h2>Set Task Properties</h2>
+    <hr />
+    Limit production to: <input type="number" id="limitUnits" /><br />
+    <div id="totalCost"></div>
+    <button id="submitLimitUnits">Apply</button>
+  </div>
+
+</div>
+
+<!-- The Modal -->
+<div id="EOWFinancialsModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close8">&times;</span>
+    <h2>End of Week Financial Statement</h2>
+    <hr />
+    <div class="row">
+	  <div class="column">
+	  	<h3>Financial Statement</h3>
+	  	<hr />
+	  	<table class="disptable">
+	  		<tr>
+	  			<td>Net Profit</td><td> <div id="netProfit"></div></td>
+	  		</tr>
+	  		<tr>
+	  			<td>Cash </td><td><div id="eowCash"></div></td>
+	  		</tr>
+	  		<tr>
+	  			<td>ROI (annualized)</td><td><div id="ROI"></div></td>
+	  		</tr>
+	  		<tr>
+	  			<td>Sales</td><td><div id="sales"></div></td>
+	  		</tr>
+	  		<tr>
+	  			<td>Inventory RM value</td><td><div id="RMinventoryValue"></div></td>
+	  		</tr>
+	  		<tr>
+	  			<td>Operating expenses</td><td><div id="OpEx"></div></td>
+	  		</tr>
+	  	</table>
+	  </div>
+	  <div class="column">
+	  	<h3>Resource utilization</h3>
+	  	<hr />
+	  	<div id="ResourceUtilizationDiv"></div>
+	  </div>
+	</div>
+  </div>
+
+</div>
+
+
+<!-- The Modal -->
+<div id="schedulerModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" id="close9">&times;</span>
+    <h2>Schedule</h2>
+    <hr />
+    <div class="row">
+	  <div class="column">
+	  	<h3>Purchasing</h3>
+	  	<hr />
+	  	Material: <select id="schedulerMaterial"></select> <br />
+	  	Quantity: <input id="schedulerQuantity" type="number" min="1" /><br />
+	  	Hour: <input id="schedulerHour" type="number" min="0" /> Min: <input id="schedulerMin" type="number" min="0" /><br />
+	  	<button id="schedulerAddPurchasingSchedule">Add</button>
+	  	<hr />
+	  	<div style="height:200px; overflow-y: scroll;" id="purchasingScheduleView"></div>
+	  </div>
+	  <div class="column">
+	  	<h3>Resource allocation</h3>
+	  	<hr />
+	  	Resource Type: <select id="schedulerResType"></select><br/>
+	  	Resource #: <select id="schedulerResNum"></select><br/>
+	  	Task: <select id="schedulerTask"></select><br>
+	  	Hour: <input id="schedulerHour2" type="number" min="0" /> Min: <input id="schedulerMin2" type="number" min="0" /><br />
+	  	<button id="schedulerAddResourceSchedule">Add</button>
+	  	<hr />
+	  	<div style="height:200px; overflow-y: scroll;" id="allocationScheduleView"></div>
+	  </div>
+	</div>
+  </div>
+
+</div>
+<form id="TheForm" method="post" action="https://process-simulator.github.io/generate-brief.html" target="TheWindow">
+<input type="hidden" name="something" value="something" />
+</form>
+<script>
+	
+	
+
+	imageObjblue = new Image(); imageObjblue.src = 'checkedblue.png';
+	imageObjbrown = new Image(); imageObjbrown.src = 'checkedbrown.png';
+	imageObjcyan = new Image(); imageObjcyan.src = 'checkedcyan.png';
+	imageObjgreen = new Image(); imageObjgreen.src = 'checkedgreen.png';
+	imageObjpink = new Image(); imageObjpink.src = 'checkedpink.png';
+	imageObjred = new Image(); imageObjred.src = 'checkedred.png';
+	imageObjgrey = new Image(); imageObjgrey.src = 'checkedgrey.png';
+	//file read
+	masterJSON={};
+	processGraph={};
+	importFile = function() {
+		var files = document.getElementById('selectFiles').files;
+	  console.log(files);
+	  if (files.length <= 0) {
+	    return false;
+	  }
+	  
+	  var fr = new FileReader();
+	  
+	  fr.onload = function(e) { 
+	  console.log(e);
+	    var result = JSON.parse(e.target.result);
+	    masterJSON=result;
+	    processGraph=masterJSON.processInfo;
+	    metadataParser(masterJSON.metadata);
+	    resourceParser(masterJSON.resourceInfo);
+	    graphParser(processGraph);
+	    arrowParser(masterJSON.connectorInfo);
+
+	for (var i=0;i<processGraph.length;i++){
+		for (var j=0;j<processGraph[i].length;j++) {
+			processGraph[i][j].recomputeSetupTime = function () { var temp = computeTime(this.setupConfig);  this.setupTime=temp; setupTimeLogger.push(temp); };
+
+			processGraph[i][j].recomputeProcTime = function () { var temp= computeTime(this.procConfig); this.procTime=temp; procTimeLogger.push(temp); };
+	  }
+	}
+}
+	    
+	  
+	  fr.readAsText(files.item(0));
+	};
+</script>
+    <script>
+    	// Get the modal
+		var addResourceModal = document.getElementById("addResourceModal");
+		var addWorkstationModal = document.getElementById("addWorkstationModal");
+		var createProcessModal = document.getElementById("createProcessModal");
+		var addRMModal = document.getElementById("addRMModal");
+		var addDemandModal = document.getElementById("addDemandModal");
+		var rmPurchaseModal= document.getElementById("rmPurchaseModal");
+		var wsParamsModal= document.getElementById("wsParamsModal");
+		var EOWFinancialsModal=document.getElementById("EOWFinancialsModal");
+		var schedulerModal=document.getElementById("schedulerModal");
+		var loadModal=document.getElementById("loadModal");
+
+		document.getElementById("load").onclick = function(){
+			loadModal.style.display="block";
+		}
+		document.getElementById("view").onclick= function(){
+			  var win = window.open("", "Title", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=780,height=200,top="+(screen.height-400)+",left="+(screen.width-840));
+win.document.write(generateInfoSnippet());
+		}
+		// Get the button that opens the modal
+		// var btn = document.getElementById("myBtn");//addResourceModal
+		// var btn2 = document.getElementById("myBtn2");
+		// var btn3 = document.getElementById("myBtn3");//addWorkstationModal
+		// var btn4 = document.getElementById("myBtn4");
+		// var btn5 = document.getElementById("myBtn5");
+		// var btn6 = document.getElementById("myBtn6");
+		// var btn7 = document.getElementById("myBtn7");
+		// Get the <span> element that closes the modal
+		var span = document.getElementById("close1");
+		var span2 = document.getElementById("close2");
+		var span3 = document.getElementById("close3");
+		var span4 = document.getElementById("close4");
+		var span5 = document.getElementById("close5");
+		var span6 = document.getElementById("close6");
+		var span7 = document.getElementById("close7");
+		var span8 = document.getElementById("close8");
+		var span9 = document.getElementById("close9");
+		var span99= document.getElementById("close99");
+
+		var triggerScheduler=document.getElementById("triggerScheduler");
+		triggerScheduler.onclick = function(){
+			clearInterval(simulationInterval);
+			simulationInterval = 0;
+			changeButtons(1);
+			schedulerModal.style.display="block";
+		}
+		// When the user clicks on the button, open the modal
+		// btn.onclick = function() {
+		//   addResourceModal.style.display = "block";
+		// }
+		// btn2.onclick = function() {
+		// 	createProcessModal.style.display = "block";
+		// }
+		// btn3.onclick = function() {
+		// 	wsAddEnable=1;
+		// }
+
+		// btn4.onclick = function() {
+		//   wsConnectEnable=1;
+		// }
+		// btn5.onclick = function() {
+		// 	rmAddEnable=1;
+		// }
+		// btn6.onclick = function() {
+		// 	demandAddEnable=1;
+		// }
+		// btn7.onclick = function() {
+		// 	var temp=document.getElementById("fileName").value;
+		// 	exportProcess(temp);
+		// }
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+		  addResourceModal.style.display = "none";
+		}
+		span2.onclick = function() {
+		  addWorkstationModal.style.display = "none";
+		}
+		span3.onclick = function() {
+		  createProcessModal.style.display = "none";
+		}
+		span4.onclick = function() {
+		  addRMModal.style.display = "none";
+		}
+		span5.onclick = function() {
+		  addDemandModal.style.display = "none";
+		}
+		span6.onclick = function() {
+		  rmPurchaseModal.style.display = "none";
+		}
+		span7.onclick = function() {
+		  wsParamsModal.style.display = "none";
+		}
+		span8.onclick = function() {
+		  EOWFinancialsModal.style.display = "none";
+		}
+		span9.onclick = function() {
+		  schedulerModal.style.display = "none";
+		}
+		span99.onclick = function() {
+		  loadModal.style.display = "none";
+		}
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+		  if (event.target == addResourceModal || event.target == addWorkstationModal || event.target == createProcessModal || event.target == addRMModal || event.target == addDemandModal || event.target == rmPurchaseModal || event.target == wsParamsModal || event.target == EOWFinancialsModal || event.target == schedulerModal || event.target == loadModal) {
+		    addResourceModal.style.display = "none";
+		    addWorkstationModal.style.display = "none";
+		    createProcessModal.style.display = "none";
+		    addRMModal.style.display = "none";
+		    addDemandModal.style.display = "none";
+		    rmPurchaseModal.style.display = "none";
+		    wsParamsModal.style.display = "none";
+		    EOWFinancialsModal.style.display = "none";
+		    schedulerModal.style.display = "none";
+		    loadModal.style.display = "none";
+		  }
+		}
+
+		distributionCheck = function () {
+			if (document.getElementById('deterministic').checked) {
+				document.getElementById('det-time').style.display = 'block';
+				document.getElementById('exp-mean-time').style.display = 'none';
+				document.getElementById('norm-mean-time').style.display = 'none';
+				document.getElementById('norm-sd').style.display = 'none';
+				document.getElementById('det-time-label').style.display = 'block';
+				document.getElementById('exp-mean-time-label').style.display = 'none';
+				document.getElementById('norm-mean-time-label').style.display = 'none';
+				document.getElementById('norm-sd-label').style.display = 'none';
+				return;
+			}
+			if (document.getElementById('exponential').checked) {
+				document.getElementById('det-time').style.display = 'none';
+				document.getElementById('exp-mean-time').style.display = 'block';
+				document.getElementById('norm-mean-time').style.display = 'none';
+				document.getElementById('norm-sd').style.display = 'none';
+				document.getElementById('det-time-label').style.display = 'none';
+				document.getElementById('exp-mean-time-label').style.display = 'block';
+				document.getElementById('norm-mean-time-label').style.display = 'none';
+				document.getElementById('norm-sd-label').style.display = 'none';
+				return;
+			}
+			if (document.getElementById('normal').checked) {
+				document.getElementById('det-time').style.display = 'none';
+				document.getElementById('exp-mean-time').style.display = 'none';
+				document.getElementById('norm-mean-time').style.display = 'block';
+				document.getElementById('norm-sd').style.display = 'block';
+				document.getElementById('det-time-label').style.display = 'none';
+				document.getElementById('exp-mean-time-label').style.display = 'none';
+				document.getElementById('norm-mean-time-label').style.display = 'block';
+				document.getElementById('norm-sd-label').style.display = 'block';
+				return;
+			}
+		}
+		var submitResourceInfo = document.getElementById("submitResourceInfo");
+		submitResourceInfo.onclick = function(event) {
+			var numResources=document.getElementById("numResourceInput").value/1;
+			var code=0;
+			var mean,sd;
+			var setupTimeConfigObj={};
+			if(document.getElementById("deterministic").checked){
+				code=0;
+				mean=document.getElementById("det-time").value/1;
+				setupTimeConfigObj["code"]=code;
+				setupTimeConfigObj["time"]=mean;
+			} else if (document.getElementById("exponential").checked){
+				code=2;
+				mean=document.getElementById("exp-mean-time").value/1;
+				setupTimeConfigObj["code"]=code;
+				setupTimeConfigObj["mean"]=mean;
+			} else if (document.getElementById("normal").checked){
+				code=1;
+				mean=document.getElementById("norm-mean-time").value/1;
+				sd=document.getElementById("norm-sd").value/1;
+				setupTimeConfigObj["code"]=code;
+				setupTimeConfigObj["mean"]=mean;
+				setupTimeConfigObj["sd"]=sd;
+			}
+			console.log(setupTimeConfigObj);
+
+			addResourceModal.style.display = "none";
+			defineResourceType(setupTimeConfigObj,numResources);
+			
+			return;
+
+		}
+
+		var submitProcessParams = document.getElementById("submitProcessParams");
+		submitProcessParams.onclick= function(event) {
+			var cols=document.getElementById("processNumCols").value/1;
+			var rows = document.getElementById("processNumRows").value/1;
+			createProcessModal.style.display = "none";
+			designerInitiate(cols,cols,rows);
+			return;
+		}
+
+		var loadSim = document.getElementById("loadSim");
+		loadSim.onclick= function(event) {
+			if(document.getElementById("existingSelected").checked){
+				var e = document.getElementById("existingSim");
+				var value = e.options[e.selectedIndex].value/1;
+				loadExistingSimulation(value);
+				loadModal.style.display="none";
+				document.getElementById("loadModalContent").innerHTML="<h2>Load simulation file</h2><hr />To load a new simulation, please refresh the page. <br/> <b>Warning!</b> You will lose all progress in the current simulation if you do so.";
+				document.getElementById("view").disabled=false;
+	document.getElementById("runSimulation").disabled=false;
+	document.getElementById("paceDown").disabled=false;
+	document.getElementById("paceUp").disabled=false;
+	document.getElementById("pauseSimulation").disabled=false;
+	document.getElementById("triggerScheduler").disabled=false;
+	document.getElementById("exportActivityLog").disabled=false;
+				return;
+			} else if (document.getElementById("uploadSelected").checked){
+				importFile();
+				loadModal.style.display="none";
+				document.getElementById("loadModalContent").innerHTML="<h2>Load simulation file</h2><hr />To load a new simulation, please refresh the page. <br/> <b>Warning!</b> You will lose all progress in the current simulation if you do so.";
+				document.getElementById("view").disabled=false;
+	document.getElementById("runSimulation").disabled=false;
+	document.getElementById("paceDown").disabled=false;
+	document.getElementById("paceUp").disabled=false;
+	document.getElementById("pauseSimulation").disabled=false;
+	document.getElementById("triggerScheduler").disabled=false;
+	document.getElementById("exportActivityLog").disabled=false;
+	return;
+			} else {
+				alert("Select an option!");
+				return;
+			}
+			
+			return;
+		}
+
+
+		distributionCheck2 = function () {
+			if (document.getElementById('deterministic2').checked) {
+				document.getElementById('det-time2').style.display = 'block';
+				document.getElementById('exp-mean-time2').style.display = 'none';
+				document.getElementById('norm-mean-time2').style.display = 'none';
+				document.getElementById('norm-sd2').style.display = 'none';
+				document.getElementById('det-time-label2').style.display = 'block';
+				document.getElementById('exp-mean-time-label2').style.display = 'none';
+				document.getElementById('norm-mean-time-label2').style.display = 'none';
+				document.getElementById('norm-sd-label2').style.display = 'none';
+				return;
+			}
+			if (document.getElementById('exponential2').checked) {
+				document.getElementById('det-time2').style.display = 'none';
+				document.getElementById('exp-mean-time2').style.display = 'block';
+				document.getElementById('norm-mean-time2').style.display = 'none';
+				document.getElementById('norm-sd2').style.display = 'none';
+				document.getElementById('det-time-label2').style.display = 'none';
+				document.getElementById('exp-mean-time-label2').style.display = 'block';
+				document.getElementById('norm-mean-time-label2').style.display = 'none';
+				document.getElementById('norm-sd-label2').style.display = 'none';
+				return;
+			}
+			if (document.getElementById('normal2').checked) {
+				document.getElementById('det-time2').style.display = 'none';
+				document.getElementById('exp-mean-time2').style.display = 'none';
+				document.getElementById('norm-mean-time2').style.display = 'block';
+				document.getElementById('norm-sd2').style.display = 'block';
+				document.getElementById('det-time-label2').style.display = 'none';
+				document.getElementById('exp-mean-time-label2').style.display = 'none';
+				document.getElementById('norm-mean-time-label2').style.display = 'block';
+				document.getElementById('norm-sd-label2').style.display = 'block';
+				return;
+			}
+		}
+
+		var submitWSInfo = document.getElementById("submitWSInfo");
+		var resourcesSelect=document.getElementById("resourcesSelect");
+		submitWSInfo.onclick = function(event) {
+			var code=0;
+			var mean,sd;
+			var processTimeConfigObj={};
+			var selectedResourceType=document.getElementById("resourcesSelect").value/1;
+			if(document.getElementById("deterministic2").checked){
+				code=0;
+				mean=document.getElementById("det-time2").value/1;
+				processTimeConfigObj["code"]=code;
+				processTimeConfigObj["time"]=mean;
+			} else if (document.getElementById("exponential2").checked){
+				code=2;
+				mean=document.getElementById("exp-mean-time2").value/1;
+				processTimeConfigObj["code"]=code;
+				processTimeConfigObj["mean"]=mean;
+			} else if (document.getElementById("normal2").checked){
+				code=1;
+				mean=document.getElementById("norm-mean-time2").value/1;
+				sd=document.getElementById("norm-sd2").value/1;
+				processTimeConfigObj["code"]=code;
+				processTimeConfigObj["mean"]=mean;
+				processTimeConfigObj["sd"]=sd;
+			}
+			console.log(processTimeConfigObj);
+			addWorkstationModal.style.display = "none";
+			addWorkstation(currWSx,currWSy,selectedResourceType,processTimeConfigObj);
+			return;
+
+		}
+
+		var submitRMParams = document.getElementById("submitRMParams");
+		var submitDemand = document.getElementById("submitDemand");
+
+		submitRMParams.onclick= function (){
+			var costPerUnit=document.getElementById("costPerUnit").value/1;
+			addRMModal.style.display="none";
+			addRawMaterialNode(currRMx, currRMy,{cost:costPerUnit});
+			return;
+		}
+
+		submitDemand.onclick= function (){
+			var unitsDemanded=document.getElementById("unitsDemanded").value/1;
+			addDemandModal.style.display="none";
+			addDemandNode(currDx, currDy,{units:unitsDemanded});
+			return;
+		}
+
+		document.getElementById('unitsToBePurchased').oninput = function (){
+			var t=document.getElementById('unitsToBePurchased').value;
+			document.getElementById('totalCost').innerHTML=(t*processGraph[currRMPurchasex][currRMPurchasey].cost);
+		}
+		var submitPurchaseRequest= document.getElementById("submitPurchaseRequest");
+		submitPurchaseRequest.onclick = function() {
+			rmPurchaseModal.style.display="none";
+			var unitsToBePurchased= document.getElementById('unitsToBePurchased').value/1;
+			var purchaseCost=(unitsToBePurchased*processGraph[currRMPurchasex][currRMPurchasey].cost);
+			if(purchaseCost>currCash) { alert("You don't have enough cash."); return;}
+			processGraph[currRMPurchasex][currRMPurchasey].units+=unitsToBePurchased;
+			processFEObjs[currRMPurchasex][currRMPurchasey].updateRMText(processGraph[currRMPurchasex][currRMPurchasey].units);
+			currCash-=purchaseCost;
+			rmSpending+=purchaseCost;
+			updateCurrCashDisplay();
+			var tempmin="";
+			if(globalTimeKeeper.min<10){tempmin="0"+globalTimeKeeper.min;} else {tempmin=globalTimeKeeper.min}
+			activityLog.push('Week '+globalTimeKeeper.week+' Day '+globalTimeKeeper.day+' 0'+globalTimeKeeper.hr+':'+tempmin+'\nPurchased '+unitsToBePurchased+' units of raw material '+String.fromCharCode(65+currRMPurchasex/1));
+		}
+
+		var submitLimitUnits = document.getElementById("submitLimitUnits");
+		submitLimitUnits.onclick = function() {
+			wsParamsModal.style.display="none";
+			var taskLimitUnits=document.getElementById("limitUnits").value/1;
+			processGraph[currWSBeingEditedx/1][currWSBeingEditedy/1].limit=taskLimitUnits;
+			processGraph[currWSBeingEditedx/1][currWSBeingEditedy/1].hasLimitSet=true;
+			var tempmin="";
+			if(globalTimeKeeper.min<10){tempmin="0"+globalTimeKeeper.min;} else {tempmin=globalTimeKeeper.min}
+			activityLog.push('Week '+globalTimeKeeper.week+' Day '+globalTimeKeeper.day+' 0'+globalTimeKeeper.hr+':'+tempmin+'\nLimited production of '+String.fromCharCode(65+currWSBeingEditedx/1)+''+currWSBeingEditedy+' to '+taskLimitUnits);
+
+		}
+simulationInterval=0;
+changeButtons(1);
+		var runSimulation=document.getElementById("runSimulation");
+		runSimulation.onclick = function() {
+			if(simulationInterval) return;
+			scheduleCheck();
+			simulationInterval= setInterval(()=>runMode(stepsArr[currPace]),paces[currPace]*stepsArr[currPace]);
+			changeButtons();
+		}
+		pauseSimulation.onclick = function() {
+			clearInterval(simulationInterval);
+			simulationInterval =0;
+			changeButtons(1);
+		}
+		var paces=[1000,500,250,120,50,16];
+		var stepsArr = [1,1,1,2,5,15]
+		currPace=0;
+		paceDown.onclick = function() {
+			if(currPace>0){
+				clearInterval(simulationInterval);
+				currPace-=1;
+				if(simulationInterval) simulationInterval=setInterval(()=>runMode(stepsArr[currPace]),paces[currPace]*stepsArr[currPace]);
+				updatePaceDisplay();
+			}
+		}
+		paceUp.onclick = function() {
+			if(currPace<5) {
+				clearInterval(simulationInterval);
+				currPace+=1;
+				if(simulationInterval) simulationInterval=setInterval(()=>runMode(stepsArr[currPace]),paces[currPace]*stepsArr[currPace]);
+				updatePaceDisplay();
+			}
+		}
+		document.getElementById("exportActivityLog").onclick = function () {
+			exportActivityLog();
+		}
+    </script>
+
+
+    <script>
+
+    	var xCoord=200;
+    	var yCoord=750;
+    	
+
+      var width = window.innerWidth;
+      var height = window.innerHeight;
+
+      var stage = new Konva.Stage({
+        container: 'container',
+        width: width,
+        height: height
+      });
+
+      var layer = new Konva.Layer();
+
+      // add the layer to the stage
+      stage.add(layer);
+    </script>
+  </body>
+</html>
