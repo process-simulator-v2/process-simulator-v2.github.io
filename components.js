@@ -15,7 +15,6 @@ var clockSwitch = function () {
 }
 
 var runSimulation = function () {
-    console.log("invoked");
     globalClock += (speed / 5);
 
     for (i = 0; i < 8; i++) {
@@ -189,31 +188,55 @@ WS = function (x, y, fillColor, distrib, mean, sd, pos_x, pos_y, prevArray, next
     this.internalClock = 0; // in seconds
     this.currentProcessingTime = 0;
     this.nextIDs = [];
-    this, fillColor = fillColor;
+    this.fillColor = fillColor;
+    this.colour = fillColor;
     this.prevIDs = [];
+    this.overlayArr = [];
     this.running = function () {
+        
+        var text = layer.find('#WSText' + WSid)[0];
         var tempRunning = layer.find('#WS' + WSid)[0];
-        var hmm = tempRunning.getAttr('fill');
-        tempRunning.setAttr('fill', altColourList[hmm]);
+        for (ol of this.overlayArr) layer.find('#ol' + ol)?.[0]?.remove();
+        let imgObj = imageObjbrown;
+        if (this.colour == 'blue') imgObj = imageObjeblue;
+        if (this.colour == 'brown') imgObj = imageObjebrown;
+        if (this.colour == 'cyan') imgObj = imageObjecyan;
+        if (this.colour == 'green') imgObj = imageObjegreen;
+        if (this.colour == 'pink') imgObj = imageObjepink;
+        if (this.colour == 'red') imgObj = imageObjered;
+        if (this.colour == 'grey') imgObj = imageObjegrey;
+        let kimg = new Konva.Image({
+            x: tempRunning?.x()-26,
+            y: tempRunning?.y()-15,
+            image: imgObj,
+            width: tempRunning?.width()*1.32,
+            height: tempRunning?.height()*1.76,
+            id: 'ol' + counter1
+        });
+        tempRunning.setAttr('fill', 'rgba(0,0,0,0)');
+        layer.add(kimg);
+        text.setAttr('fill', 'black');
+        kimg.moveToBottom();
+        this.overlayArr = [counter1];
+        counter1++;
     }
     this.notRunning = function () {
-        var tempRunning = layer.find('#WS' + WSid)[0];
-        var hmm = tempRunning.getAttr('fillColor');
-        tempRunning.setAttr('fill', hmm);
+        var text = layer.find('#WSText' + WSid)[0];
+        for (ol of this.overlayArr) layer.find('#ol' + ol)?.[0]?.remove();
+        this.overlayArr = [];
+        layer.find('#WS' + WSid)[0]?.setAttr('fill',this.colour);
+        text.setAttr('fill', colourTextMap[this.colour]);
     }
     this.assign = function () {
-        console.log(this, WSid);
         this.machineCount++;
         var text = layer.find('#WSText' + WSid)[0];
         let txt = this.processingTime;
         if (this.machineCount) txt = "+" + txt;
         text.setAttr('text', txt);
         layer.draw();
-        console.log(text, txt, layer);
     }
 
     this.deassign = function () {
-        console.log(this);
         this.machineCount--;
         var text = layer.find('#WSText' + WSid)[0];
         let txt = this.processingTime;
@@ -241,7 +264,6 @@ WS = function (x, y, fillColor, distrib, mean, sd, pos_x, pos_y, prevArray, next
     this.resetClock = function () {
         this.internalClock = 0;
         this.currentProcessingTime = returnProcessingTime();
-        console.log("updated!" + WSid);
     }
     this.WSStatusRefresh = function () {
         if (this.active) {
@@ -563,7 +585,6 @@ ResourceAura = function (setupConfiguration) {
     })
     this.ResourceComp.on('dragend', function () {
         var cursor = stage.getPointerPosition();
-        console.log(cursor);
         checkWhichBox(cursor, this);
     })
 

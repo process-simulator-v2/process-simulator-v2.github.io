@@ -111,7 +111,8 @@ function FERefresh () {
 function minimum(a,b){
 	if(a<b) return a; return b;
 }
-function updateResourceStatusTextSelf (machine, text){
+function updateResourceStatusTextSelf (Feobj,machine, text){
+	if(!Feobj?.extraMachines?.length && text == 'prod') Feobj?.running(); else Feobj?.notRunning();//update
 	machine.updateResourceStatusText(text,machine?.ResourceComp,machine?.ResourceComp?.x(),machine?.ResourceComp?.y(),machine?.ResourceComp?.width(),machine?.ResourceComp?.height())
 }
 function runMode (steps){
@@ -119,15 +120,12 @@ function runMode (steps){
 	let remainingTime = (480-(counter%480))
 	if(remainingTime< steps) steps = remainingTime;
 	for(walker=0;walker < steps; walker++){
-		//console.log("current minute: "+counter);
 		counter++;
 		globalTimeKeeper.min+=1;
-		//if(Number.isInteger(globalTimeKeeper.min)){
 		incrementGlobalTimeKeeperMinutes();
 		if(thisHourScheduleList && thisHourScheduleList[globalTimeKeeper.min]){
 			var tasksToBePerformed=thisHourScheduleList[globalTimeKeeper.min];
 			for(var p=0;p<tasksToBePerformed.length;p++){
-				console.log(tasksToBePerformed[p]);
 				executeTask(tasksToBePerformed[p]);
 			}
 		}
@@ -159,8 +157,8 @@ function runMode (steps){
 								resourceUtilization[pgNew.type].repair+=1;
 								if(pgNew.timeSinceRepair>=pgNew.currRepairTime){
 									pgNew.status=2;
-									if(machine) updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"prod");
-									else updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"prod");
+									if(machine) updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"prod");
+									else updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"prod");
 									continue;
 								}
 							}
@@ -168,15 +166,14 @@ function runMode (steps){
 								//setting up
 								//pgNew.timeSinceSetup=(pgNew.timeSinceSetup+0.2).toFixed(1)/1;
 								pgNew.timeSinceSetup+=1;
-								console.log(pgNew);
 								resourceUtilization[pg.type].setup+=1;
 								if(pgNew.timeSinceSetup>=pg.setupTime || pg.setupTime==0){
 									pgNew.status=2; //mark it as running
 									if(machine){
-										updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"idle");
+										updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"idle");
 									}
 									else{
-										updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"idle");
+										updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"idle");
 										//if(!pg?.extraMachines?.length) processFEObjs[i][j].running();
 									}
 								}
@@ -205,9 +202,9 @@ function runMode (steps){
 									if(canRun!=pgNew.canRun){
 										pgNew.canRun=canRun;
 										if(machine){
-											updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],canRun ? "prod": "idle");
+											updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],canRun ? "prod": "idle");
 										} else {
-											updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],canRun ? "prod": "idle");
+											updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],canRun ? "prod": "idle");
 										}
 									}
 									if (canRun) {
@@ -229,10 +226,9 @@ function runMode (steps){
 											pgNew.currRepairTime=((-1*pg.setupConfig.mr)*Math.log(1-Math.random())).toFixed()/1;
 											pgNew.timeSinceRepair=0;
 											pgNew.timeSinceBreakdown=0;
-											console.log(pgNew.currBreakDownTime);
 											
-											if(machine) updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"repair");
-											else updateResourceStatusTextSelf(resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"repair");
+											if(machine) updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"repair");
+											else updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"repair");
 										}
 										else {
 											//new unit passed
@@ -687,7 +683,6 @@ checkWhichBox= function(position,type) {
 		var xx=((position.x-xCoord1+20)/80).toFixed()/1;
 		var oldX=type.attrs.assignedToX;
 		var oldY=type.attrs.assignedToY;
-		console.log(processGraph[xx][yy].type,type.attrs.type)
 		if(processGraph[xx][yy].type==type.attrs.type && processGraph[xx][yy].isDummy ==false ){
 			assignResourceToTask(type,oldX,oldY,xx,yy);
 			// type.setAttr('opacity', 0);
@@ -713,7 +708,7 @@ checkWhichBox= function(position,type) {
 	  //       type.setAttr('assignedToX', xx);
 	  //       type.setAttr('assignedToY', yy);
 	  //       resourceObjs[type.attrs.i][type.attrs.j].updateResourceText(xx+","+yy);
-	  //       updateResourceStatusTextSelf(resourceObjs[type.attrs.i][type.attrs.j],"setup");
+	  //       updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[type.attrs.i][type.attrs.j],"setup");
 		} else {
 			type.setAttr('opacity', 0);
 	        type.setAttr('x', type.attrs.original_x);
@@ -735,7 +730,6 @@ checkWhichBox= function(position,type) {
 
 assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 	//re-assigns a Resource from x1,y1 to x2,y2
-	console.log(ResourceCompObject);
 	ResourceCompObject.setAttr('opacity', 0);
 	        ResourceCompObject.setAttr('x', ResourceCompObject.attrs.original_x);
 	        ResourceCompObject.setAttr('y', ResourceCompObject.attrs.original_y);
@@ -743,6 +737,7 @@ assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 	        ResourceCompObject.setAttr('height', 50);
 	        layer.draw();
 	        if(x1>-1){
+				processFEObjs[x1][y1]?.notRunning();
 				//picking resource from x1, y1
 				let extraMachineArr = processGraph[x1][y1]?.extraMachines;
 				if(extraMachineArr?.length){
@@ -806,7 +801,7 @@ assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 	        ResourceCompObject.setAttr('assignedToX', x2);
 	        ResourceCompObject.setAttr('assignedToY', y2);
 	        resourceObjs[ResourceCompObject.attrs.i][ResourceCompObject.attrs.j].updateResourceText(String.fromCharCode(65+x2)+y2);
-	        updateResourceStatusTextSelf(resourceObjs[ResourceCompObject.attrs.i][ResourceCompObject.attrs.j],"setup");
+	        updateResourceStatusTextSelf(processFEObjs[x2][y2],resourceObjs[ResourceCompObject.attrs.i][ResourceCompObject.attrs.j],"setup");
 	        var tempmin="";
 			if(globalTimeKeeper.min<10){tempmin="0"+globalTimeKeeper.min;} else {tempmin=globalTimeKeeper.min}
 	activityLog.push('Week '+globalTimeKeeper.week+' Day '+globalTimeKeeper.day+' 0'+globalTimeKeeper.hr+':'+tempmin+'\nAssigned '+resourceColourList[ResourceCompObject.attrs.type/1]+' to task at '+String.fromCharCode(65+x2)+''+y2);

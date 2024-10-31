@@ -83,10 +83,8 @@ updatePaceDisplay = function() {
 }
 
 triggerEndOfWeekFinancialsDialog = function(){
-console.log(currCash);
 		totSpending+=rmSpending;
 		totSpending+=fixedExp;
-		console.log(rmSpending,totSpending);
 		currCash=currCash-fixedExp;
 		updateCurrCashDisplay();
 		var endOfWeekCash=currCash;

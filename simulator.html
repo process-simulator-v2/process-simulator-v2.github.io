@@ -376,12 +376,18 @@ button:hover {
 	imageObjpink = new Image(); imageObjpink.src = 'checkedpink.png';
 	imageObjred = new Image(); imageObjred.src = 'checkedred.png';
 	imageObjgrey = new Image(); imageObjgrey.src = 'checkedgrey.png';
+	imageObjeblue = new Image(); imageObjeblue.src = 'checkedeblue.png';
+	imageObjebrown = new Image(); imageObjebrown.src = 'checkedebrown.png';
+	imageObjecyan = new Image(); imageObjecyan.src = 'checkedecyan.png';
+	imageObjegreen = new Image(); imageObjegreen.src = 'checkedegreen.png';
+	imageObjepink = new Image(); imageObjepink.src = 'checkedepink.png';
+	imageObjered = new Image(); imageObjered.src = 'checkedered.png';
+	imageObjegrey = new Image(); imageObjegrey.src = 'checkedegrey.png';
 	//file read
 	masterJSON={};
 	processGraph={};
 	importFile = function() {
 		var files = document.getElementById('selectFiles').files;
-	  console.log(files);
 	  if (files.length <= 0) {
 	    return false;
 	  }
@@ -389,7 +395,6 @@ button:hover {
 	  var fr = new FileReader();
 	  
 	  fr.onload = function(e) { 
-	  console.log(e);
 	    var result = JSON.parse(e.target.result);
 	    masterJSON=result;
 	    processGraph=masterJSON.processInfo;
@@ -590,7 +595,6 @@ win.document.write(generateInfoSnippet());
 				setupTimeConfigObj["mean"]=mean;
 				setupTimeConfigObj["sd"]=sd;
 			}
-			console.log(setupTimeConfigObj);
 
 			addResourceModal.style.display = "none";
 			defineResourceType(setupTimeConfigObj,numResources);
@@ -706,7 +710,6 @@ win.document.write(generateInfoSnippet());
 				processTimeConfigObj["mean"]=mean;
 				processTimeConfigObj["sd"]=sd;
 			}
-			console.log(processTimeConfigObj);
 			addWorkstationModal.style.display = "none";
 			addWorkstation(currWSx,currWSy,selectedResourceType,processTimeConfigObj);
 			return;
