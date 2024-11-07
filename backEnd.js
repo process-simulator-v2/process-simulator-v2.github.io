@@ -199,13 +199,11 @@ function runMode (steps){
 											break;
 										}
 									}
-									if(canRun!=pgNew.canRun){
 										pgNew.canRun=canRun;
 										if(machine){
 											updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],canRun ? "prod": "idle");
 										} else {
 											updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],canRun ? "prod": "idle");
-										}
 									}
 									if (canRun) {
 										pgNew.productionMode=true;
@@ -741,11 +739,24 @@ assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 				//picking resource from x1, y1
 				let extraMachineArr = processGraph[x1][y1]?.extraMachines;
 				if(extraMachineArr?.length){
-					//extra machine getting removed
-					if(extraMachineArr[extraMachineArr?.length-1].productionMode==true){
-						for(var k=0;k<processGraph[x1][y1].childNodes.length;k++) {
-							processGraph[processGraph[x1][y1].childNodes[k][0]][processGraph[x1][y1].childNodes[k][1]].units+=1;
+					var toRemX=ResourceCompObject.attrs.original_x, toRemY = ResourceCompObject.attrs.original_y,remIndex;
+					for (remIndex =0;remIndex< extraMachineArr?.length&&(!(extraMachineArr[remIndex]?.resourceX == toRemX && extraMachineArr[remIndex]?.resourceY == toRemY));remIndex++);
+					if(remIndex < extraMachineArr?.length){
+						if(extraMachineArr[remIndex].productionMode==true){
+							for(var k=0;k<processGraph[x1][y1].childNodes.length;k++) {
+								processGraph[processGraph[x1][y1].childNodes[k][0]][processGraph[x1][y1].childNodes[k][1]].units+=1;
+							}
 						}
+					}
+					else {
+						remIndex--;
+						if(processGraph[x1][y1].productionMode==true){
+							for(var k=0;k<processGraph[x1][y1].childNodes.length;k++) {
+								processGraph[processGraph[x1][y1].childNodes[k][0]][processGraph[x1][y1].childNodes[k][1]].units+=1;
+							}
+						}
+						for(key of ['setupTime','status','timeSinceProduction','timeSinceSetup','units']) processGraph[x1][y1][key]= extraMachineArr[remIndex][key];
+						for(key of ['resourceX','resourceY','WSComp']) processFEObjs[x1][y1][key]= processFEObjs[x1][y1]['extraMachines'][remIndex][key];
 					}
 					if(extraMachineArr?.length == 1) {
 						delete processGraph[x1][y1]['extraMachines'];
@@ -754,8 +765,8 @@ assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 						// else processFEObjs[x1][y1].notRunning();
 					}
 					else {
-						extraMachineArr.pop();
-						processFEObjs?.extraMachines?.pop();
+						processGraph[x1][y1]['extraMachines']?.splice(remIndex,1);
+						processFEObjs[x1][y1]['extraMachines']?.splice(remIndex,1);
 					}
 				}
 	        	else {
