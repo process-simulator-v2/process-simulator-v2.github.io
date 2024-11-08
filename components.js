@@ -450,6 +450,8 @@ WSSidebar = function (x, y, fillColor) {
 
 
 Resource = function (setupConfiguration) {
+    this.text1 = 'idle';
+    this.text2 = '';
     this.status = 0;
     //status can be 0: idle, 1: setup, 2: prod
     this.ResourceComp = new Konva.Rect({
@@ -497,6 +499,7 @@ Resource = function (setupConfiguration) {
     layer.add(ResourceCompStatusText);
     stage.add(layer);
     this.updateResourceText = function (newText) {
+        this.text2 = newText;
         var text = layer.find('#ResourceText' + setupConfiguration.id)[0];
         text.setAttr('text', newText);
         layer.draw();
@@ -505,6 +508,7 @@ Resource = function (setupConfiguration) {
         var text = layer.find('#ResourceStatusText' + setupConfiguration.id)[0];
         var positionText = layer.find('#ResourceText' + setupConfiguration.id)[0];
         if (newText == 'prod') {
+            this.text1 = 'prod';
             for (ol of this.overlayArr) layer.find('#ol' + ol)?.[0]?.remove();
             let imgObj = imageObjbrown;
             if (this.colour == 'blue') imgObj = imageObjblue;
@@ -531,6 +535,7 @@ Resource = function (setupConfiguration) {
             counter1++;
         }
         else {
+            this.text1 = 'idle';
             for (ol of this.overlayArr) layer.find('#ol' + ol)?.[0]?.remove();
             this.overlayArr = [];
             resComp?.fill(this.colour);
