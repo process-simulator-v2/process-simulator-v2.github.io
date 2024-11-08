@@ -181,6 +181,7 @@ function runMode (steps){
 								resourceUtilization[pg.type].setup+=1;
 								if(pgNew.timeSinceSetup>=pg.setupTime || pg.setupTime==0){
 									pgNew.status=2; //mark it as running
+									pgNew?.recomputeProcTime();
 									if(machine){
 										updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"idle",machine-1);
 									}
