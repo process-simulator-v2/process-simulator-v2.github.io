@@ -748,7 +748,7 @@ assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 	        ResourceCompObject.setAttr('height', 50);
 	        layer.draw();
 	        if(x1>-1){
-				//processFEObjs[x1][y1]?.notRunning();
+				if(!getCountOfProdMachines(String.fromCharCode(65+x1)+y1,ResourceCompObject.attrs.i,ResourceCompObject.attrs.j)) processFEObjs[x1][y1]?.notRunning();
 				//picking resource from x1, y1
 				let extraMachineArr = processGraph[x1][y1]?.extraMachines;
 				if(extraMachineArr?.length){
