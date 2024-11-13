@@ -126,7 +126,7 @@ button:hover {
   	<button id="myBtn6">Add demand node</button>
   	<button id="myBtn4">Connect workstations</button>
   	<button id="myBtn7">Export file</button> -->
-    <div id="container" style="overflow: scroll; height: calc(100vh - 50px)"></div>
+    <div id="container" style="overflow: scroll; height: calc(100vh - 50px);"></div>
     <!-- Trigger/Open The Modal -->
 
 <!-- The Modal -->
@@ -804,19 +804,16 @@ changeButtons(1);
 
 
     <script>
-
-    	var xCoord=200;
-    	var yCoord=750;
     	
 		var ratio = 0.6;
       var width = 2100*ratio;
       var height = 1050*ratio;
 
-      var stage = new Konva.Stage({
-        container: 'container',
-        width: width,
-        height: height
-      });
+    //   var stage = new Konva.Stage({
+    //     container: 'container',
+    //     width: width,
+    //     height: height
+    //   });
 
       var layer = new Konva.Layer();
 
