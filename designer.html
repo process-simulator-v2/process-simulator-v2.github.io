@@ -346,9 +346,9 @@ button:hover {
 			  console.log(e);
 			    var result = JSON.parse(e.target.result);
 			    masterJSON=result;
+				loadCanvas(result);
 			    loadDesignerExisting(masterJSON);
 		}
-	    
 	  
 	  fr.readAsText(files.item(0));
 	};

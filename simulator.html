@@ -397,6 +397,7 @@ button:hover {
 	  fr.onload = function(e) { 
 	    var result = JSON.parse(e.target.result);
 	    masterJSON=result;
+		loadCanvas(result);
 	    processGraph=masterJSON.processInfo;
 	    metadataParser(masterJSON.metadata);
 	    resourceParser(masterJSON.resourceInfo);
@@ -800,25 +801,6 @@ changeButtons(1);
 		document.getElementById("exportActivityLog").onclick = function () {
 			exportActivityLog();
 		}
-    </script>
-
-
-    <script>
-    	
-		var ratio = 0.6;
-      var width = 2100*ratio;
-      var height = 1050*ratio;
-
-    //   var stage = new Konva.Stage({
-    //     container: 'container',
-    //     width: width,
-    //     height: height
-    //   });
-
-      var layer = new Konva.Layer();
-
-      // add the layer to the stage
-      stage.add(layer);
     </script>
   </body>
 </html>
