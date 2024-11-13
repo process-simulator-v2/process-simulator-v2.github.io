@@ -231,7 +231,7 @@ function runMode (steps){
 								} else {
 										//send to repair
 										pgNew.timeSinceBreakdown+=1;
-										if(pgNew.timeSinceBreakdown>=pgNew.currBreakDownTime){
+										if(pgNew?.currBreakDownTime && pgNew.timeSinceBreakdown>=pgNew.currBreakDownTime){
 											pgNew.status=3;
 											pgNew.currBreakDownTime=((-1*pg.setupConfig.mf)*Math.log(1-Math.random())).toFixed()/1;
 											pgNew.currRepairTime=((-1*pg.setupConfig.mr)*Math.log(1-Math.random())).toFixed()/1;
