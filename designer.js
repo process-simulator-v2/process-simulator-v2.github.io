@@ -112,11 +112,12 @@ defineResourceType = function (setupTimeConfig, numResources) {
 	    //padding: 20,
 	    align: 'left'
 	});
+	setupTimeDisplayList?.push(temp2);
 	var temp3= new Konva.Text({
 		x: xCoord2-150,
 	    y: yCoord2+17.5+100*(currResourceTypeCount-1),
-	    text:"",
-		//text:"[edit]",
+	    //text:"",
+		text:"[edit]",
 	    fontSize: 15,
 	    fontFamily: 'Arial',
 	    width: 50,
@@ -180,6 +181,11 @@ defineResourceType = function (setupTimeConfig, numResources) {
 currResourceBeingEdited=0;
 editResourceType = function(setupTimeConfig, numResources){
 	editMode=false;
+	if(setupTimeConfig.code==0) var timeDisplay=setupTimeConfig.time;
+	else var timeDisplay=setupTimeConfig.mean;
+
+	setupTimeDisplayList[currResourceBeingEdited].setAttr('text',''+timeDisplay);
+	layer?.draw();
 	if(tentativeResourceList[currResourceBeingEdited].num<numResources){
 		//add remaining
 		for (var i=tentativeResourceList[currResourceBeingEdited].num-1;i<numResources;i++) {
@@ -537,7 +543,7 @@ addDemandNode = function(x,y,props) {
 
 
 exportProcess = function(fileName) {
-	if(check(fileName)) return;
+	if(check("FileName",fileName)) return;
 	for(var i=0;i<tentativeGraph.length;i++){
 		for(var j=1;j<tentativeGraph[i].length-1;j++){
 			if(tentativeGraph[i][j].isDummy==false && tentativeGraph[i][j].childNodes.length==0){
@@ -545,6 +551,10 @@ exportProcess = function(fileName) {
 				return;
 			}
 		}
+	}
+	for(colTemp of tentativeGraph) for(let i =1;i<colTemp?.length-1;i++){
+		let nd = colTemp[i];
+		if(!nd?.isDummy) nd['setupConfig'] = tentativeResourceList[nd?.type];
 	}
 	//saves the process JSON
 	var processJSONObj={
@@ -659,3 +669,4 @@ function setStage(widthInput,heightInput){
 	// add the layer to the stage
 	stage.add(layer);
 }
+setupTimeDisplayList = [];
