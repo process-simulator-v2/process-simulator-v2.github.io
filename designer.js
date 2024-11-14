@@ -115,7 +115,8 @@ defineResourceType = function (setupTimeConfig, numResources) {
 	var temp3= new Konva.Text({
 		x: xCoord2-150,
 	    y: yCoord2+17.5+100*(currResourceTypeCount-1),
-	    text:"[edit]",
+	    text:"",
+		//text:"[edit]",
 	    fontSize: 15,
 	    fontFamily: 'Arial',
 	    width: 50,
@@ -623,6 +624,23 @@ function loadCanvas(resultData){
 	for(let res of resultData?.resourceInfo) resXCount= max2(resXCount, res?.num);
 	setStage(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 300,max2(max2(resYCount,5)*100+75,max2(procYCount,6)*50+75));
 	xCoord1 = 300+60*max2(resXCount,5);
+}
+function loadCanvas1(resXCount,resYCount,procXCount,procYCount){
+	setStage1(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 300,max2(max2(resYCount,5)*100+75,max2(procYCount,6)*50+75));
+	xCoord1 = 300+60*max2(resXCount,5);
+}
+function setStage1(widthInput,heightInput){
+	let stage1; if(stage) stage1 = stage;
+	stage = new Konva.Stage({
+	container: 'container',
+	width: widthInput,
+	height: heightInput
+	});
+	//layer = new Konva.Layer();
+
+	// add the layer to the stage
+	stage.add(layer);
+	stage1?.destroy;
 }
 
 function max2(a,b){ if (a> b) return a; return b;}

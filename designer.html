@@ -100,7 +100,7 @@ button:hover {
   	<button id="myBtn7" >Finalise & Export file</button>
   	<button id="myBtn8" >Finalise Resources</button>
 	<div style="font-size:small;color:grey;display: none;" id="msg1">Refresh the page to start afresh</div>
-    <div id="container"></div>
+    <div id="container" style="overflow: scroll; height: calc(100vh - 75px);"></div>
     <!-- Trigger/Open The Modal -->
 
 <div id="loadModal" class="modal">
@@ -112,7 +112,7 @@ button:hover {
     <hr />
    		<input type="radio" name="simType" id="newSelected" value="0" checked>Create new simulation
    		<br/>
-   		<input type="radio" name="simType" id="uploadSelected" value="1">Or, upload and modify an existing simulation 
+   		<input type="radio" name="simType" id="uploadSelected" value="1"><label for="uploadSelected">, upload and modify an existing simulation </label>
    			<input type="file" id="selectFiles" value="Import" />
 	<button id="loadSim">Start</button>
   </div>
@@ -524,40 +524,50 @@ button:hover {
 				return;
 			}
 		}
+		resXc=0,resYc =0;
 		var submitResourceInfo = document.getElementById("submitResourceInfo");
 		submitResourceInfo.onclick = function(event) {
-			var numResources=document.getElementById("numResourceInput").value/1;
+			var numResources=document.getElementById("numResourceInput").value/1 || 0;
+			if(check("Number of resources",numResources)) return;
 			var code=0;
 			var mean,sd;
 			var setupTimeConfigObj={};
 			if(document.getElementById("deterministic").checked){
 				code=0;
-				mean=document.getElementById("det-time").value/1;
+				mean=document.getElementById("det-time").value/1 || 0;
 				setupTimeConfigObj["code"]=code;
 				setupTimeConfigObj["time"]=mean;
 			} else if (document.getElementById("exponential").checked){
 				code=2;
-				mean=document.getElementById("exp-mean-time").value/1;
+				mean=document.getElementById("exp-mean-time").value/1 || 0;
 				setupTimeConfigObj["code"]=code;
 				setupTimeConfigObj["mean"]=mean;
 			} else if (document.getElementById("normal").checked){
 				code=1;
-				mean=document.getElementById("norm-mean-time").value/1;
-				sd=document.getElementById("norm-sd").value/1;
+				mean=document.getElementById("norm-mean-time").value/1 || 0;
+				sd=document.getElementById("norm-sd").value/1 || 0;
 				setupTimeConfigObj["code"]=code;
 				setupTimeConfigObj["mean"]=mean;
 				setupTimeConfigObj["sd"]=sd;
 			}
-			setupTimeConfigObj["mf"]=document.getElementById("mf").value/1;
-			setupTimeConfigObj["mr"]=document.getElementById("mr").value/1;
+			else {
+				code=0;
+				mean=document.getElementById("det-time").value/1 || 0;
+				setupTimeConfigObj["code"]=code;
+				setupTimeConfigObj["time"]=mean;
+			}
+			setupTimeConfigObj["mf"]=document.getElementById("mf").value/1 || 0;
+			setupTimeConfigObj["mr"]=document.getElementById("mr").value/1 || 0;
 			console.log(setupTimeConfigObj);
 
 			addResourceModal.style.display = "none";
-			if(editMode==false)
+			resXc = max2(resXc,numResources);
+			if(editMode==false){
 				defineResourceType(setupTimeConfigObj,numResources);
+				resYc ++;}
 			else 
 				editResourceType(setupTimeConfigObj,numResources);
-			
+			loadCanvas1(resXc,resYc,procXc,procYc);
 			document.getElementById("myBtn2").disabled=false;
 			return;
 
@@ -565,23 +575,28 @@ button:hover {
 fixedExpValue=0;
 initCashValue=0;
 noOfWeeks=0;
+procXc =0, procYc =0;
 		var submitProcessParams = document.getElementById("submitProcessParams");
 		submitProcessParams.onclick= function(event) {
-			var cols=document.getElementById("processNumCols").value/1;
-			var rows = document.getElementById("processNumRows").value/1;
-			noOfWeeks=document.getElementById("processWeeks").value/1;
-			fixedExpValue=document.getElementById("fixedExp").value/1;
-			initCashValue=document.getElementById("initCash").value/1;
+			var cols=document.getElementById("processNumCols").value/1 ||0;
+			var rows = document.getElementById("processNumRows").value/1 || 0;
+			noOfWeeks=document.getElementById("processWeeks").value/1 || 0;
+			fixedExpValue=document.getElementById("fixedExp").value/1 || 0;
+			initCashValue=document.getElementById("initCash").value/1 || 0;
+			if(check("Columns Count",cols) || check("Row Count",rows) || check("No. of Weeks",noOfWeeks)) return; 
 			createProcessModal.style.display = "none";
+			procXc = cols; procYc = rows;
+			loadCanvas1(resXc,resYc,procXc,procYc);
 			designerInitiate(cols,cols,rows);
 			setMode(3);
 			return;
 		}
 		var submitProcessParams2 = document.getElementById("submitProcessParams2");
 		submitProcessParams2.onclick= function(event) {
-			noOfWeeks=document.getElementById("processWeeks2").value/1;
-			fixedExpValue=document.getElementById("fixedExp2").value/1;
-			initCashValue=document.getElementById("initCash2").value/1;
+			noOfWeeks=document.getElementById("processWeeks2").value/1 || 0;
+			fixedExpValue=document.getElementById("fixedExp2").value/1 || 0;
+			initCashValue=document.getElementById("initCash2").value/1 || 0;
+			if(check("No. of Weeks",noOfWeeks)) return;
 			console.log(noOfWeeks,fixedExpValue,initCashValue);
 			editProcessModal.style.display = "none";
 			setMode(3);
@@ -649,21 +664,25 @@ noOfWeeks=0;
 			var wsBufferVal=document.getElementById("ws-buffer2").value/1;
 			if(document.getElementById("deterministic2").checked){
 				code=0;
-				mean=document.getElementById("det-time2").value/1;
+				mean=document.getElementById("det-time2").value/1 || 0;
 				processTimeConfigObj["code"]=code;
 				processTimeConfigObj["time"]=mean;
+				if(check("Process Time",mean)) return;
+				
 			} else if (document.getElementById("exponential2").checked){
 				code=2;
-				mean=document.getElementById("exp-mean-time2").value/1;
+				mean=document.getElementById("exp-mean-time2").value/1 || 0;
 				processTimeConfigObj["code"]=code;
 				processTimeConfigObj["mean"]=mean;
+				if(check("Mean of Process Time",mean)) return;
 			} else if (document.getElementById("normal2").checked){
 				code=1;
-				mean=document.getElementById("norm-mean-time2").value/1;
-				sd=document.getElementById("norm-sd2").value/1;
+				mean=document.getElementById("norm-mean-time2").value/1 || 0;
+				sd=document.getElementById("norm-sd2").value/1 || 0;
 				processTimeConfigObj["code"]=code;
 				processTimeConfigObj["mean"]=mean;
 				processTimeConfigObj["sd"]=sd;
+				if(check("Mean of Process Time",mean)) return;
 			}
 			console.log(processTimeConfigObj);
 			addWorkstationModal.style.display = "none";
@@ -672,20 +691,25 @@ noOfWeeks=0;
 			return;
 
 		}
+		function check(name = "Input Value", input){
+			if(!input) {
+				window.alert(name + " cannot be zero !!"); return 1;} return 0;
+		}
 
 		var submitRMParams = document.getElementById("submitRMParams");
 		var submitDemand = document.getElementById("submitDemand");
 
 		submitRMParams.onclick= function (){
-			var costPerUnit=document.getElementById("costPerUnit").value/1;
+			var costPerUnit=document.getElementById("costPerUnit").value/1 || 0;
 			addRMModal.style.display="none";
 			addRawMaterialNode(currRMx, currRMy,{cost:costPerUnit});
 			return;
 		}
 
 		submitDemand.onclick= function (){
-			var unitsDemanded=document.getElementById("unitsDemanded").value/1;
-			var sellingPrice=document.getElementById("sellingPrice").value/1;
+			var unitsDemanded=document.getElementById("unitsDemanded").value/1 || 0;
+			var sellingPrice=document.getElementById("sellingPrice").value/1 || 0;
+			if(check("Selling Price",sellingPrice)) return;
 			addDemandModal.style.display="none";
 			addDemandNode(currDx, currDy,{units:unitsDemanded,sellingPrice:sellingPrice});
 			return;
