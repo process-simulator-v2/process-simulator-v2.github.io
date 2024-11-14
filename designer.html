@@ -8,7 +8,7 @@
     <script src="backEnd.js"></script>
     <script src="designer.js"></script>
     <meta charset="utf-8" />
-    <meta name="author" content="Yuvraj Singh Bawa, Puneet Randar">
+    <meta name="author" content="Shiva Sai Naidu, Yuvraj Singh Bawa, Puneet Randar">
     <title>Process Simulator Designer (Working Copy)</title>
     <style>
 
@@ -87,17 +87,19 @@ button:hover {
 				<a class="nav-link" href="simulator.html">Simulator</a>
 			</nav>
 	</div>
+	<input type="text" placeholder="Name..." id="fileName" />
   	<button id="startBtn">Start</button>
-  	<input type="text" placeholder="Name..." id="fileName" />
-  	<button id="myBtn" disabled>Add resource</button>
-  	<button id="myBtn2" disabled>Make Layout</button>
-  	<button id="myBtn5" disabled>Add raw material</button>
-  	<button id="myBtn3" disabled>Add workstations</button>
-  	<button id="editWSBtn" disabled>Edit Workstation</button>
+  	<button id="myBtn" >Add resource</button>
+  	<button id="myBtn2" >Make Layout</button>
+  	<button id="myBtn5" >Add raw material</button>
+  	<button id="myBtn3" >Add workstations</button>
+  	<button id="editWSBtn" >Edit Workstation</button>
   	<!-- <button id="removeWSBtn" disabled>Remove Workstation</button> -->
-  	<button id="myBtn6" disabled>Add demand node</button>
-  	<button id="myBtn4" disabled>Connect workstations</button>
-  	<button id="myBtn7" disabled>Export file</button>
+  	<button id="myBtn6" >Add demand node</button>
+  	<button id="myBtn4" >Connect workstations</button>
+  	<button id="myBtn7" >Finalise & Export file</button>
+  	<button id="myBtn8" >Finalise Resources</button>
+	<div style="font-size:small;color:grey;display: none;" id="msg1">Refresh the page to start afresh</div>
     <div id="container"></div>
     <!-- Trigger/Open The Modal -->
 
@@ -262,6 +264,66 @@ button:hover {
 		var btn5 = document.getElementById("myBtn5");
 		var btn6 = document.getElementById("myBtn6");
 		var btn7 = document.getElementById("myBtn7");
+		var btn8 = document.getElementById("myBtn8");
+		function setMode(mode =0){
+			if(mode == 0){
+				//set Name only name & start button
+				startBtn.style.display = 'inline-block';
+				editWSBtn.style.display = 'none';
+				btn.style.display = 'none';
+				btn2.style.display = 'none';
+				btn3.style.display = 'none';
+				btn4.style.display = 'none';
+				btn5.style.display = 'none';
+				btn6.style.display = 'none';
+				btn7.style.display = 'none';
+				btn8.style.display = 'none';
+			}
+			else if(mode == 1){
+				//Resources saving
+				document.getElementById('msg1').display = 'block';
+				startBtn.style.display = 'none';
+				editWSBtn.style.display = 'none';
+				btn.style.display = 'inline-block';
+				btn2.style.display = 'none';
+				btn3.style.display = 'none';
+				btn4.style.display = 'none';
+				btn5.style.display = 'none';
+				btn6.style.display = 'none';
+				btn7.style.display = 'none';
+				btn8.style.display = 'inline-block';
+				
+			}
+			else if(mode == 2){
+				console.log("called mode 2");
+				//Process Graph
+				startBtn.style.display = 'none';
+				editWSBtn.style.display = 'none';
+				btn.style.display = 'none';
+				btn2.style.display = 'inline-block';
+				btn3.style.display = 'none';
+				btn4.style.display = 'none';
+				btn5.style.display = 'none';
+				btn6.style.display = 'none';
+				btn7.style.display = 'none';
+				btn8.style.display = 'none';
+				
+			}
+			else if(mode == 3){
+				//set Name only name & start button
+				startBtn.style.display = 'none';
+				editWSBtn.style.display = 'none';
+				btn.style.display = 'none';
+				btn2.style.display = 'none';
+				btn3.style.display = 'inline-block';
+				btn4.style.display = 'inline-block';
+				btn5.style.display = 'inline-block';
+				btn6.style.display = 'inline-block';
+				btn7.style.display = 'inline-block';
+				btn8.style.display = 'none';
+			}
+		}
+		setMode(0);
 		// Get the <span> element that closes the modal
 		var span = document.getElementById("close1");
 		var span2 = document.getElementById("close2");
@@ -279,7 +341,7 @@ button:hover {
 		  document.getElementById("numResourceInput").focus();
 		}
 		btn2.onclick = function() {
-			if(btn2.innerHTML=="Edit Process"){
+			if(btn2.innerHTML=="Edit / Finalise Layout"){
 				editProcessModal.style.display="block";
 				document.getElementById("processWeeks2").value=noOfWeeks;
 				document.getElementById("fixedExp2").value=fixedExpValue;
@@ -312,6 +374,11 @@ button:hover {
 		btn7.onclick = function() {
 			var temp=document.getElementById("fileName").value;
 			exportProcess(temp);
+		}
+		console.log("nri");
+		btn8.onclick = function() {
+			console.log("nre");
+			setMode(2);
 		}
 		editWSBtn.onclick = function() {
 			wsEditEnable=1;
@@ -365,8 +432,10 @@ button:hover {
 		document.getElementById('loadSim').onclick = function(){
 			if(document.getElementById("newSelected").checked){
 				loadModal.style.display="none";
+				setMode(1);
 				document.getElementById("loadModalContent").innerHTML="<h2>Start</h2><hr />To create a new simulation, please refresh the page. <br/> <b>Warning!</b> Please save your progress before refreshing, or you will lose all progress.";
 				document.getElementById("myBtn").disabled=false;
+				document.getElementById("myBtn8").disabled=false;
 				return;
 			} else if (document.getElementById("uploadSelected").checked){
 				importFile();
@@ -376,11 +445,13 @@ button:hover {
 				document.getElementById("myBtn6").disabled=false;
 				document.getElementById("myBtn4").disabled=false;
 				document.getElementById("myBtn7").disabled=false;
+				document.getElementById("myBtn8").disabled=false;
 				document.getElementById("editWSBtn").disabled=false;
 				document.getElementById("myBtn2").disabled=false;
-				document.getElementById("myBtn2").innerHTML="Edit Process";
+				document.getElementById("myBtn2").innerHTML="Edit / Finalise Layout";
 				document.getElementById("fileName").value = fileName;
 
+				setMode(1);
 				loadModal.style.display="none";
 				document.getElementById("loadModalContent").innerHTML="<h2>Start</h2><hr />To create a new simulation, please refresh the page. <br/> <b>Warning!</b> Please save your progress before refreshing, or you will lose all progress.";
 				document.getElementById("myBtn").disabled=false;
@@ -503,13 +574,7 @@ noOfWeeks=0;
 			initCashValue=document.getElementById("initCash").value/1;
 			createProcessModal.style.display = "none";
 			designerInitiate(cols,cols,rows);
-			document.getElementById("myBtn5").disabled=false;
-			document.getElementById("myBtn3").disabled=false;
-			document.getElementById("editWSBtn").disabled=false;
-			document.getElementById("myBtn6").disabled=false;
-			document.getElementById("myBtn7").disabled=false;
-			document.getElementById("myBtn4").disabled=false;
-			document.getElementById("myBtn2").disabled=true;
+			setMode(3);
 			return;
 		}
 		var submitProcessParams2 = document.getElementById("submitProcessParams2");
@@ -519,6 +584,7 @@ noOfWeeks=0;
 			initCashValue=document.getElementById("initCash2").value/1;
 			console.log(noOfWeeks,fixedExpValue,initCashValue);
 			editProcessModal.style.display = "none";
+			setMode(3);
 			return;
 		}
 

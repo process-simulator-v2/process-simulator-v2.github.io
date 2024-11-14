@@ -29,28 +29,4 @@ loadExistingSimulation = function(id){
 	  }
 	}
 }
-function loadCanvas(resultData){
-	resXCount = 0;
-	resYCount = resultData?.resourceInfo?.length || 0;
-	procXCount = resultData?.processInfo?.length || 0;
-	procYCount = resultData?.processInfo?.[0]?.length || 0;
-	for(let res of resultData?.resourceInfo) resXCount= max2(resXCount, res?.num);
-	setStage(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 300,max2(max2(resYCount,5)*100+75,max2(procYCount,6)*50+75));
-	xCoord1 = 300+60*max2(resXCount,5);
-}
 
-function max2(a,b){ if (a> b) return a; return b;}
-function min2(a,b){ if (a< b) return a; return b;}
-var stage,layer;
-function setStage(widthInput,heightInput){
-	if(stage) stage?.destroy();
-	stage = new Konva.Stage({
-	container: 'container',
-	width: widthInput,
-	height: heightInput
-	});
-	layer = new Konva.Layer();
-
-	// add the layer to the stage
-	stage.add(layer);
-}
