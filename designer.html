@@ -82,11 +82,10 @@ button:hover {
 	<div class="row" style="font-weight: 900;padding: 10px;">
 		<a  class="nav-link" href="index.html" style="font-size: x-large;">Process Simulator</a>
 			<nav class="nav nav-masthead justify-content-center float-right" style="float:right">
-				<a class="nav-link" href="index.html">Home</a>
-				<a class="nav-link active" href="designer.html">Designer</a>
 				<a class="nav-link" href="simulator.html">Simulator</a>
 			</nav>
 	</div>
+	<hr>
 	<input type="text" placeholder="Name..." id="fileName" />
   	<button id="startBtn">Start</button>
   	<button id="myBtn" >Add resource</button>
@@ -99,8 +98,8 @@ button:hover {
   	<button id="myBtn4" >Connect workstations</button>
   	<button id="myBtn7" >Finalise & Export file</button>
   	<button id="myBtn8" >Finalise Resources</button>
-	<div style="font-size:small;color:grey;display: none;" id="msg1">Refresh the page to start afresh</div>
-    <div id="container" style="overflow: scroll; height: calc(100vh - 75px);"></div>
+	<div style="font-size:small;color:grey;display: none; padding: 3px;" id="msg1">Refresh the page to start afresh</div>
+    <div id="container" style="overflow: scroll; height: calc(100vh - 100px);"></div>
     <!-- Trigger/Open The Modal -->
 
 <div id="loadModal" class="modal">
@@ -112,7 +111,7 @@ button:hover {
     <hr />
    		<input type="radio" name="simType" id="newSelected" value="0" checked>Create new simulation
    		<br/>
-   		<input type="radio" name="simType" id="uploadSelected" value="1"><label for="uploadSelected">, upload and modify an existing simulation </label>
+   		<input type="radio" name="simType" id="uploadSelected" value="1"><label for="uploadSelected">Or, upload and modify an existing simulation </label>
    			<input type="file" id="selectFiles" value="Import" />
 	<button id="loadSim">Start</button>
   </div>
@@ -281,7 +280,7 @@ button:hover {
 			}
 			else if(mode == 1){
 				//Resources saving
-				document.getElementById('msg1').display = 'block';
+				document.getElementById('msg1').style.display = 'block';
 				startBtn.style.display = 'none';
 				editWSBtn.style.display = 'none';
 				btn.style.display = 'inline-block';
@@ -693,7 +692,7 @@ procXc =0, procYc =0;
 		}
 		function check(name = "Input Value", input){
 			if(!input) {
-				window.alert(name + " cannot be zero !!"); return 1;} return 0;
+				window.alert(name + " cannot be Empty or 0 !!"); return 1;} return 0;
 		}
 
 		var submitRMParams = document.getElementById("submitRMParams");

@@ -537,6 +537,7 @@ addDemandNode = function(x,y,props) {
 
 
 exportProcess = function(fileName) {
+	if(check(fileName)) return;
 	for(var i=0;i<tentativeGraph.length;i++){
 		for(var j=1;j<tentativeGraph[i].length-1;j++){
 			if(tentativeGraph[i][j].isDummy==false && tentativeGraph[i][j].childNodes.length==0){
@@ -658,13 +659,3 @@ function setStage(widthInput,heightInput){
 	// add the layer to the stage
 	stage.add(layer);
 }
-// var editWSBtn = document.getElementById("editWSBtn");
-// 		// Get the button that opens the modal
-// 		var startBtn = document.getElementById("startBtn");//addResourceModal
-// 		var btn = document.getElementById("myBtn");//addResourceModal
-// 		var btn2 = document.getElementById("myBtn2");
-// 		var btn3 = document.getElementById("myBtn3");//addWorkstationModal
-// 		var btn4 = document.getElementById("myBtn4");
-// 		var btn5 = document.getElementById("myBtn5");
-// 		var btn6 = document.getElementById("myBtn6");
-// 		var btn7 = document.getElementById("myBtn7");
