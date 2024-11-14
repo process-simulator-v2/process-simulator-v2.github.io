@@ -35,7 +35,7 @@ function loadCanvas(resultData){
 	procXCount = resultData?.processInfo?.length || 0;
 	procYCount = resultData?.processInfo?.[0]?.length || 0;
 	for(let res of resultData?.resourceInfo) resXCount= max2(resXCount, res?.num);
-	setStage(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 300,max2(max2(resYCount,5)*100+50,max2(procYCount,6)*50+50));
+	setStage(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 300,max2(max2(resYCount,5)*100+75,max2(procYCount,6)*50+75));
 	xCoord1 = 300+60*max2(resXCount,5);
 }
 
