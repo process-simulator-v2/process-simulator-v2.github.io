@@ -797,7 +797,7 @@ assignResourceToTask = function (ResourceCompObject,x1,y1,x2,y2){
 			if(pg.status) newMachine=1;
 			let pgNew= newMachine ? new Node(pg.type,0,pg.setupConfig,pg.procConfig,pg.children, pg.isDummy,pg.isDemand): pg; 
 	        pgNew.status=1;
-	        if(pg.setupTime==0){pgNew.status=2;} else {  pgNew.recomputeSetupTime();}
+	        if(pg.setupTime==0){pgNew.status=2;pgNew?.recomputeProcTime();} else {  pgNew.recomputeSetupTime();}
 	        resourceUtilization[pg.type].usedFlag=1;
 			if(newMachine){
 				if(pg?.extraMachines?.length) pg.extraMachines?.push(pgNew);

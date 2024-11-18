@@ -99,7 +99,7 @@ button:hover {
   	<button id="myBtn7" >Finalise & Export file</button>
   	<button id="myBtn8" >Finalise Resources</button>
 	<div style="font-size:small;color:grey;display: none; padding: 3px;" id="msg1">Refresh the page to start afresh</div>
-    <div id="container" style="overflow: scroll; height: calc(100vh - 100px);"></div>
+    <div id="container" style="overflow: scroll; height: calc(100vh - 122px);"></div>
     <!-- Trigger/Open The Modal -->
 
 <div id="loadModal" class="modal">
@@ -125,7 +125,7 @@ button:hover {
   <!-- Modal content -->
   <div class="modal-content">
     <span class="close" id="close1">&times;</span>
-    <h2>Add new resource type</h2>
+    <h2>Enter Resource Info</h2>
     <hr />
     Number of resources:<input type="number" id="numResourceInput" min="1" max="5" /><br />
     Mean time before failure (m<sub>f</sub>): <input type="number" id="mf" /><br/>
@@ -143,7 +143,7 @@ button:hover {
 	<label id="norm-mean-time-label" style="display:none">Mean setup time: </label><input type="number" id="norm-mean-time" min="0" style="display:none" />
 	<label id="norm-sd-label" style="display:none">Standard deviation: </label><input type="number" id="norm-sd" min="0" style="display:none" />
 	
-	<button id="submitResourceInfo" style="display: block;">Add</button>
+	<button id="submitResourceInfo" style="display: block;">Submit</button>
   </div>
 
 </div>
@@ -172,7 +172,7 @@ button:hover {
 	<label id="norm-mean-time-label2" style="display:none">Mean processing time: </label><input type="number" id="norm-mean-time2" min="0" style="display:none" />
 	<label id="norm-sd-label2" style="display:none">Standard deviation: </label><input type="number" id="norm-sd2" min="0" style="display:none" />
 	
-	<button id="submitWSInfo"  style="display: block;">Add</button>
+	<button id="submitWSInfo"  style="display: block;">Submit</button>
   </div>
 
 </div>
@@ -661,14 +661,7 @@ procXc =0, procYc =0;
 			var processTimeConfigObj={};
 			var selectedResourceType=document.getElementById("resourcesSelect").value/1;
 			var wsBufferVal=document.getElementById("ws-buffer2").value/1;
-			if(document.getElementById("deterministic2").checked){
-				code=0;
-				mean=document.getElementById("det-time2").value/1 || 0;
-				processTimeConfigObj["code"]=code;
-				processTimeConfigObj["time"]=mean;
-				if(check("Process Time",mean)) return;
-				
-			} else if (document.getElementById("exponential2").checked){
+			if (document.getElementById("exponential2").checked){
 				code=2;
 				mean=document.getElementById("exp-mean-time2").value/1 || 0;
 				processTimeConfigObj["code"]=code;
@@ -682,6 +675,13 @@ procXc =0, procYc =0;
 				processTimeConfigObj["mean"]=mean;
 				processTimeConfigObj["sd"]=sd;
 				if(check("Mean of Process Time",mean)) return;
+			}
+			else {
+				code=0;
+				mean=document.getElementById("det-time2").value/1 || 0;
+				processTimeConfigObj["code"]=code;
+				processTimeConfigObj["time"]=mean;
+				if(check("Process Time",mean)) return;
 			}
 			console.log(processTimeConfigObj);
 			addWorkstationModal.style.display = "none";

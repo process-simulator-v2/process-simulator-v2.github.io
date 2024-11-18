@@ -554,7 +554,7 @@ exportProcess = function(fileName) {
 	}
 	for(colTemp of tentativeGraph) for(let i =1;i<colTemp?.length-1;i++){
 		let nd = colTemp[i];
-		if(!nd?.isDummy) nd['setupConfig'] = tentativeResourceList[nd?.type];
+		if(!nd?.isDummy) nd['setupConfig'] = tentativeResourceList[nd?.type]?.setupTimeConfig;
 	}
 	//saves the process JSON
 	var processJSONObj={
@@ -637,7 +637,7 @@ function loadCanvas(resultData){
 	xCoord1 = 300+60*max2(resXCount,5);
 }
 function loadCanvas1(resXCount,resYCount,procXCount,procYCount){
-	setStage1(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 300,max2(max2(resYCount,5)*100+75,max2(procYCount,6)*50+75));
+	setStage1(max2(resXCount,5)*60 + max2(procXCount,6)*80 + 310,max2(max2(resYCount,5)*100+75,max2(procYCount,6)*50+125));
 	xCoord1 = 300+60*max2(resXCount,5);
 }
 function setStage1(widthInput,heightInput){
