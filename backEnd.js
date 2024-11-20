@@ -168,7 +168,14 @@ function runMode (steps){
 								pgNew.timeSinceRepair+=1;
 								resourceUtilization[pgNew.type].repair+=1;
 								if(pgNew.timeSinceRepair>=pgNew.currRepairTime){
-									pgNew.status=2;
+									pgNew.status=2;{
+										if(repairMode == 1){
+											pgNew.timeSinceProduction=0;
+										}
+										else if (repairMode == 2) {
+											pgNew.recomputeProcTime();
+											pgNew.timeSinceProduction=0;}
+									}
 									if(machine) updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceX][processFEObjs[i][j]?.extraMachines?.[machine-1]?.resourceY],"prod",machine-1);
 									else updateResourceStatusTextSelf(processFEObjs[i][j],resourceObjs[processFEObjs[i][j].resourceX][processFEObjs[i][j].resourceY],"prod",machine-1);
 									continue;
@@ -248,7 +255,7 @@ function runMode (steps){
 											if (pgNew.timeSinceProduction>=pg.procTime) {
 												pg.units+=1;
 												if(pg.hasLimitSet){pg.limit-=1;}
-												pg.recomputeProcTime();
+												pgNew.recomputeProcTime();
 												pgNew.timeSinceProduction=0;
 												pgNew.productionMode=false;
 											}
@@ -679,6 +686,9 @@ metadataParser = function(metadataObj) {
 	var text = layer.find('#fixedExp')[0];
 	text.setAttr('text',''+fixedExp);
 	currCash=metadataObj.initCash;
+	repairMode = metadataObj?.repairMode || 0;
+	changeRepairMode(repairMode);
+	layer.add(repairDisplay);
 	text = layer.find('#currCash')[0];
 	text.setAttr('text',''+currCash);
 	layer.draw();

@@ -12,6 +12,7 @@ totSpending=0;
 //frontend
 xCoordFinance=25;
 yCoordFinance =150;
+repairMode = 0;
 globalFinanceObj={
 	cashDescriber: new Konva.Text({
 		x: xCoordFinance,
@@ -68,6 +69,26 @@ globalFinanceObj={
 	    align: 'left',
 	    id:'paceDisplay'
 	})
+}
+
+repairDisplay = new Konva.Text({
+	x: xCoordFinance,
+	   y: yCoordFinance+20+30+20+20+30+30,
+	text:"Repair Mode: Preemptive repair",
+	fontSize: 12,
+	fill: 'grey',
+	fontFamily: 'Arial',
+	width: 100,
+	//padding: 20,
+	align: 'left',
+	id:'repairDisplay'
+})
+function changeRepairMode(num = 0){
+	let txt = "Repair Mode: Preemptive repair";
+	if(num == 2) txt = "Repair Mode: Non-preemptive with new process time";
+	if(num == 1) txt = "Repair Mode: Non-preemptive repair";
+	repairDisplay.setAttr('text',txt);
+	//layer.draw();
 }
 
 updateCurrCashDisplay = function(){

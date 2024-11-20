@@ -111,8 +111,8 @@ button:hover {
     <hr />
    		<input type="radio" name="simType" id="newSelected" value="0" checked>Create new simulation
    		<br/>
-   		<input type="radio" name="simType" id="uploadSelected" value="1"><label for="uploadSelected">Or, upload and modify an existing simulation </label>
-   			<input type="file" id="selectFiles" value="Import" />
+   		<input type="radio" name="simType" id="uploadSelected" value="1"><label for="uploadSelected">Or, upload and modify an existing simulation 
+   			<input type="file" id="selectFiles" value="Import" onclick="selectRadio('uploadSelected')"></label>
 	<button id="loadSim">Start</button>
   </div>
 
@@ -191,6 +191,13 @@ button:hover {
     Number of weeks: <input type="number" id="processWeeks" min="1" max="10" /><br />
     Fixed Weekly Expenditure: <input type="number" id="fixedExp" min="1" /><br />
     Initial cash: <input type="number" id="initCash" min="1" /><br />
+	Repair Mode:<br>
+	  <input type="radio" id="mode0" name="mode0" value="0" checked>
+	  <label for="mode0">Preemptive Repairing</label><br>
+	  <input type="radio" id="mode1" name="mode0" value="1">
+	  <label for="mode1">Non Preemptive repairing with same process time</label><br>
+	  <input type="radio" id="mode2" name="mode0" value="2">
+	  <label for="mode2">Non Preemptive repairing with new process time</label><br>
     <button id="submitProcessParams">Create</button>
   </div>
 
@@ -207,6 +214,13 @@ button:hover {
     Number of weeks: <input type="number" id="processWeeks2" min="1" max="10" /><br />
     Fixed Weekly Expenditure: <input type="number" id="fixedExp2" min="1" /><br />
     Initial cash: <input type="number" id="initCash2" min="1" /><br />
+	Repair Mode:<br>
+	  <input type="radio" id="mod0" name="mod0" value="0" checked>
+	  <label for="mod0">Preemptive Repairing</label><br>
+	  <input type="radio" id="mod1" name="mod0" value="1">
+	  <label for="mod1">Non Preemptive repairing with same process time</label><br>
+	  <input type="radio" id="mod2" name="mod0" value="2">
+	  <label for="mod2">Non Preemptive repairing with new process time</label><br>
     <button id="submitProcessParams2">Update</button>
   </div>
 
@@ -243,6 +257,9 @@ button:hover {
 </div>
 
     <script>
+		function selectRadio(idTxt = 'uploadSelected'){
+		document.getElementById('uploadSelected').checked = true
+	}
     	// Get the modal
     	var editMode=false;
 		var addResourceModal = document.getElementById("addResourceModal");
@@ -345,6 +362,7 @@ button:hover {
 				document.getElementById("processWeeks2").value=noOfWeeks;
 				document.getElementById("fixedExp2").value=fixedExpValue;
 				document.getElementById("initCash2").value=initCashValue;
+				document.getElementById('mod'+repairMode).checked = true;
 				document.getElementById("processWeeks2").focus();
 				return;
 			}
@@ -574,6 +592,7 @@ button:hover {
 fixedExpValue=0;
 initCashValue=0;
 noOfWeeks=0;
+repairMode = 0;
 procXc =0, procYc =0;
 		var submitProcessParams = document.getElementById("submitProcessParams");
 		submitProcessParams.onclick= function(event) {
@@ -582,6 +601,8 @@ procXc =0, procYc =0;
 			noOfWeeks=document.getElementById("processWeeks").value/1 || 0;
 			fixedExpValue=document.getElementById("fixedExp").value/1 || 0;
 			initCashValue=document.getElementById("initCash").value/1 || 0;
+			if(document.getElementById('mode1').checked) repairMode = 1; 
+			else if(document.getElementById('mode2').checked) repairMode = 2; 
 			if(check("Columns Count",cols) || check("Row Count",rows) || check("No. of Weeks",noOfWeeks)) return; 
 			createProcessModal.style.display = "none";
 			procXc = cols; procYc = rows;
@@ -596,7 +617,9 @@ procXc =0, procYc =0;
 			fixedExpValue=document.getElementById("fixedExp2").value/1 || 0;
 			initCashValue=document.getElementById("initCash2").value/1 || 0;
 			if(check("No. of Weeks",noOfWeeks)) return;
-			console.log(noOfWeeks,fixedExpValue,initCashValue);
+			if(document.getElementById('mod1').checked) repairMode = 1; 
+			else if(document.getElementById('mod2').checked) repairMode = 2; 
+			console.log(noOfWeeks,fixedExpValue,initCashValue, repairMode);
 			editProcessModal.style.display = "none";
 			setMode(3);
 			return;

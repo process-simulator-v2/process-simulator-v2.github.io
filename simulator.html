@@ -152,7 +152,7 @@ button:hover {
    		</select>
    		<br/>
    		<input type="radio" name="simType" id="uploadSelected" value="1">Or, upload 
-   			<input type="file" id="selectFiles" value="Import" />
+   			<input type="file" id="selectFiles" value="Import" onclick="selectRadio('uploadSelected')"/>
 	<button id="loadSim">Load</button>
   </div>
 
@@ -371,7 +371,9 @@ button:hover {
 </form>
 <script>
 	
-	
+	function selectRadio(idTxt = 'uploadSelected'){
+		document.getElementById('uploadSelected').checked = true
+	}
 
 	imageObjblue = new Image(); imageObjblue.src = 'images/checkedblue.png';
 	imageObjbrown = new Image(); imageObjbrown.src = 'images/checkedbrown.png';

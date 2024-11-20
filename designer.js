@@ -562,7 +562,8 @@ exportProcess = function(fileName) {
 			fileName: fileName,
 			fixedExp: fixedExpValue,
 			initCash: initCashValue,
-			weeks: noOfWeeks
+			weeks: noOfWeeks,
+			repairMode: repairMode || 0
 		},
 		resourceInfo: tentativeResourceList,
 		processInfo:tentativeGraph,
@@ -588,6 +589,7 @@ loadDesignerExisting = function(existingJSON) {
 	fixedExpValue=existingJSON.metadata.fixedExp/1;
 	initCashValue=existingJSON.metadata.initCash/1;
 	noOfWeeks=existingJSON.metadata.weeks;
+	repairMode = existingJSON.metadata.repairMode/1 || 0; 
 	//next, create process grid
 	var _cols= existingJSON.processInfo.length;
 	var _rows = existingJSON.processInfo[0].length-2;
