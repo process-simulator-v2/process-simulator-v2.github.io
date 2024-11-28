@@ -148,17 +148,19 @@ function runMode (steps){
 			let pg=processGraph[i][j];
 					if(j==len2-1) {
 						//demand stuff
-						if(processGraph[pg.childNodes[0][0]][pg.childNodes[0][1]].units>0) {
+						for(iter =0;iter<pg?.childNodes?.length;iter++){
+						if(processGraph[pg.childNodes[iter][0]][pg.childNodes[iter][1]].units>0) {
 							if(pg.units>0){
-								let sellQty = minimum(pg.units,processGraph[pg.childNodes[0][0]][pg.childNodes[0][1]].units)
+								let sellQty = minimum(pg.units,processGraph[pg.childNodes[iter][0]][pg.childNodes[iter][1]].units)
 								pg.units-=sellQty;
 							//processFEObjs[i][j].updateDemandText(""+pg.units);
 							currCash+=(sellQty*pg.sellingPrice);
 							dayThroughput+=(sellQty*pg.sellingPrice);
 							//updateCurrCashDisplay();
-							processGraph[pg.childNodes[0][0]][pg.childNodes[0][1]].units-=sellQty;
+							processGraph[pg.childNodes[iter][0]][pg.childNodes[iter][1]].units-=sellQty;
 						}
 						}
+					}
 						continue;
 					} else {		
 						for(let machine=0;machine<(1+(pg?.extraMachines?.length||0));machine++){
@@ -235,7 +237,8 @@ function runMode (steps){
 									} else {
 										pgNew.productionMode=false;
 									}
-								} else {
+								}
+								if(pgNew?.productionMode){
 										//send to repair
 										pgNew.timeSinceBreakdown+=1;
 										if(pgNew?.currBreakDownTime && pgNew.timeSinceBreakdown>=pgNew.currBreakDownTime){
@@ -252,7 +255,7 @@ function runMode (steps){
 											//new unit passed
 											pgNew.timeSinceProduction+=1;
 											resourceUtilization[pg.type].prod+=1;
-											if (pgNew.timeSinceProduction>=pg.procTime) {
+											if (pgNew.timeSinceProduction>=pgNew.procTime) {
 												pg.units+=1;
 												if(pg.hasLimitSet){pg.limit-=1;}
 												pgNew.recomputeProcTime();
