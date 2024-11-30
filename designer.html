@@ -134,8 +134,8 @@ button:hover {
     <h2>Enter Resource Info</h2>
     <hr />
     Number of resources:<input type="number" id="numResourceInput" min="1" max="5" /><br />
-    Mean time before failure (m<sub>f</sub>): <input type="number" id="mf" /><br/>
-	Mean time to repair (m<sub>r</sub>): <input type="number" id="mr"><br/>
+    Mean time before failure (in min)(m<sub>f</sub>): <input type="number" id="mf" /><br/>
+	Mean time to repair (in min)(m<sub>r</sub>): <input type="number" id="mr"><br/>
     Setup Time Configuration:<br />
     Distribution: 
     <br/><input type="radio" id="deterministic" name="distribution" value="deterministic" onclick="distributionCheck()">
@@ -144,9 +144,9 @@ button:hover {
 	  <label for="female">Exponential</label><br>
 	  <input type="radio" id="normal" name="distribution" value="normal" onclick="distributionCheck()">
 	  <label for="other">Normal</label>
-	  <label id="det-time-label"  style="display:none">Setup time: </label><input type="number" id="det-time" min="0" style="display:none" />
-	<label id="exp-mean-time-label" style="display:none">Mean setup time:</label> <input type="number" id="exp-mean-time" min="0" style="display:none" />
-	<label id="norm-mean-time-label" style="display:none">Mean setup time: </label><input type="number" id="norm-mean-time" min="0" style="display:none" />
+	  <label id="det-time-label"  style="display:none">Setup time: (in min)</label><input type="number" id="det-time" min="0" style="display:none" />
+	<label id="exp-mean-time-label" style="display:none">Mean setup time: (in min)</label> <input type="number" id="exp-mean-time" min="0" style="display:none" />
+	<label id="norm-mean-time-label" style="display:none">Mean setup time: (in min)</label><input type="number" id="norm-mean-time" min="0" style="display:none" />
 	<label id="norm-sd-label" style="display:none">Standard deviation: </label><input type="number" id="norm-sd" min="0" style="display:none" />
 	
 	<button id="submitResourceInfo" style="display: block;">Submit</button>
@@ -173,9 +173,9 @@ button:hover {
 	  <label for="female">Exponential</label><br>
 	  <input type="radio" id="normal2" name="distribution2" value="normal2" onclick="distributionCheck2()">
 	  <label for="other">Normal</label>
-	  <label id="det-time-label2"  style="display:none">Processing time: </label><input type="number" id="det-time2" min="0" style="display:none" />
-	<label id="exp-mean-time-label2" style="display:none">Mean processing time:</label> <input type="number" id="exp-mean-time2" min="0" style="display:none" />
-	<label id="norm-mean-time-label2" style="display:none">Mean processing time: </label><input type="number" id="norm-mean-time2" min="0" style="display:none" />
+	  <label id="det-time-label2"  style="display:none">Processing time: (in min)</label><input type="number" id="det-time2" min="0" style="display:none" />
+	<label id="exp-mean-time-label2" style="display:none">Mean processing time: (in min)</label> <input type="number" id="exp-mean-time2" min="0" style="display:none" />
+	<label id="norm-mean-time-label2" style="display:none">Mean processing time: (in min)</label><input type="number" id="norm-mean-time2" min="0" style="display:none" />
 	<label id="norm-sd-label2" style="display:none">Standard deviation: </label><input type="number" id="norm-sd2" min="0" style="display:none" />
 	
 	<button id="submitWSInfo"  style="display: block;">Submit</button>
@@ -195,8 +195,8 @@ button:hover {
     Number of columns: <input type="number" id="processNumCols" min="1" max="10" /><br />
     Number of rows: <input type="number" id="processNumRows" min="1" max="10" /><br />
     Number of weeks: <input type="number" id="processWeeks" min="1" max="10" /><br />
-    Fixed Weekly Expenditure: <input type="number" id="fixedExp" min="1" /><br />
-    Initial cash: <input type="number" id="initCash" min="1" /><br />
+    Fixed Weekly Expenditure: (Rs)<input type="number" id="fixedExp" min="1" /><br />
+    Initial cash: (Rs)<input type="number" id="initCash" min="1" /><br />
 	Repair Mode:<br>
 	  <input type="radio" id="mode0" name="mode0" value="0" checked>
 	  <label for="mode0">Preemptive Repairing</label><br>
@@ -218,8 +218,8 @@ button:hover {
     <h2>Specify process parameters: </h2>
     <hr />
     Number of weeks: <input type="number" id="processWeeks2" min="1" max="10" /><br />
-    Fixed Weekly Expenditure: <input type="number" id="fixedExp2" min="1" /><br />
-    Initial cash: <input type="number" id="initCash2" min="1" /><br />
+    Fixed Weekly Expenditure: (Rs)<input type="number" id="fixedExp2" min="1" /><br />
+    Initial cash: (Rs)<input type="number" id="initCash2" min="1" /><br />
 	Repair Mode:<br>
 	  <input type="radio" id="mod0" name="mod0" value="0" checked>
 	  <label for="mod0">Preemptive Repairing</label><br>
@@ -241,7 +241,7 @@ button:hover {
     <span class="close" id="close4">&times;</span>
     <h2>Specify parameters: </h2>
     <hr />
-    Cost per unit: <input type="number" id="costPerUnit" /><br />
+    Cost per unit: (Rs)<input type="number" id="costPerUnit" /><br />
     <button id="submitRMParams">Add</button>
   </div>
 
@@ -256,7 +256,7 @@ button:hover {
     <h2>Specify parameters: </h2>
     <hr />
     Units demanded: <input type="number" id="unitsDemanded" /><br />
-    Selling price/unit: <input type="number" id="sellingPrice" />
+    Selling price/unit: (Rs)<input type="number" id="sellingPrice" />
     <button id="submitDemand">Add</button>
   </div>
 
